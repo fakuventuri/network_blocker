@@ -5,7 +5,7 @@
 <br />
 <br />
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/fakuventuri/network_blocker)
+[![Version](https://img.shields.io/badge/version-1.3.5-blue)](https://github.com/fakuventuri/network_blocker)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
