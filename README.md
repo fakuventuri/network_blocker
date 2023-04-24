@@ -65,7 +65,7 @@ This script is for educational and research purposes only. Use it responsibly an
 
 ## License
 
-`network_blocker` by [@fakuventuri](https://github.com/fakuventuri). Released under the [GPL 3 license](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE).
+`network_blocker` released under the [GPL 3 license](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE).
 
 
 [//]: # "## Stargazers over time"
