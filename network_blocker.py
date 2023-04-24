@@ -13,6 +13,9 @@ import socket
 
 import subprocess
 
+import signal
+import atexit
+
 from threading import Thread
 
 from typing import List, Tuple
@@ -83,6 +86,8 @@ def block_device(
         process = subprocess.Popen(
             arpspoof_cmd, stdout=devnull, stderr=devnull, start_new_session=True
         )
+
+    atexit.register(terminate_subprocess, process)
     # return the process
     return process
 
@@ -92,6 +97,13 @@ def processTerminator(blocked_devices):
         process.terminate()
         process.wait()
     print("All processes terminated.")
+
+
+def terminate_subprocess(process):
+    try:
+        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+    except ProcessLookupError:
+        pass
 
 
 def print_menu():
