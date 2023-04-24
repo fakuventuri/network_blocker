@@ -1,9 +1,5 @@
 #
-# Developed by @FakuVenturi: https://github.com/fakuventuri
-#
 # Github: https://github.com/fakuventuri/network_blocker
-#
-# Path: network_blocker.py
 #
 # This script is used to block a device on your network.
 #
