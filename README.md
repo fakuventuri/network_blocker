@@ -24,21 +24,34 @@
 * scapy
 * python-tabulate
 
+
 ## Usage
 
-#### 1) Download the script with wget or any other way.
-* wget:
+#### 1) Clone repo
 
-  In the path you want to save the script:
+  In the path you want to save the folder:
  ```
- wget https://raw.githubusercontent.com/fakuventuri/network_blocker/main/network_blocker.py
+ git clone https://github.com/fakuventuri/network_blocker
  ```
 
-#### 2) Run the script:
+#### 2) Enter the folder:
+
+```
+cd network-blocker
+```
+
+#### 3) Run the script:
 
 ```
 sudo python3 network_blocker.py
 ```
+
+[//]: # "wget https://raw.githubusercontent.com/fakuventuri/network_blocker/main/network_blocker.py"
+
+## Update
+
+Run `sh update.sh` to update the scripts. This will clone the main branch into `/tmp/network_blocker` and overwrite the local files.
+
 
 ## Contributing
 
