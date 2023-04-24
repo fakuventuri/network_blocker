@@ -5,22 +5,22 @@
 <br />
 <br />
 
-[![Version](https://img.shields.io/badge/version-1.3.5-blue)](https://github.com/fakuventuri/network_blocker)
+[![Version](https://img.shields.io/badge/version-1.4.3-blue)](https://github.com/fakuventuri/network_blocker)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 ## Features
 
 * **WiFi** network scanning with [scapy](https://github.com/secdev/scapy).
-* **ARP spoofing** with arpspoof.
-* **Table** display with [python-tabulate](https://github.com/astanin/python-tabulate).
+* **Table display** the devices info with [python-tabulate](https://github.com/astanin/python-tabulate).
+* **Block connection of multiple devices simultaneously** with ARP spoofing and subprocess.
 
 
 ## Requirements
 
 * **Linux** root privileges
 * Python
-* dsniff(arpspoof)
+* dsniff (arpspoof)
 * scapy
 * python-tabulate
 
