@@ -63,7 +63,7 @@ def print_menu():
 
     print("\n#                Welcome to Network Blocker              #")
     print("         Script to block a device on your network          \n")
-    print("                                       Developed by OzKuro \n")
+    print("                                  Developed by FakuVenturi \n")
 
 
 if __name__ == "__main__":
