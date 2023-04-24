@@ -40,6 +40,11 @@
 sudo python3 network_blocker.py
 ```
 
+## Contributing
+
+Contributions are very welcome!
+
+
 ## License
 
 `network_blocker` by [@fakuventuri](https://github.com/fakuventuri). Released under the [GPL 3 license](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE).
