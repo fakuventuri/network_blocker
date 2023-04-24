@@ -26,7 +26,7 @@
 
 ## Usage
 
-### 1) Download the script with wget or any other way.
+#### 1) Download the script with wget or any other way.
 * wget:
 
   In the path you want to save the script:
@@ -34,7 +34,7 @@
  wget https://raw.githubusercontent.com/fakuventuri/network_blocker/main/network_blocker.py
  ```
 
-### 2) Run the script:
+#### 2) Run the script:
 
 ```
 sudo python3 network_blocker.py
