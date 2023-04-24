@@ -45,6 +45,11 @@ sudo python3 network_blocker.py
 Contributions are very welcome!
 
 
+## Disclaimer
+
+This script is for educational and research purposes only. Use it responsibly and ethically, ensuring you have proper authorization and consent from the network owner or administrator. The developer and repository owner are not responsible for any misuse or damages caused by this script. By using it, you accept full responsibility for your actions and agree to comply with all applicable laws and regulations. If you are unsure about legality or ethics, consult a legal or cybersecurity professional.
+
+
 ## License
 
 `network_blocker` by [@fakuventuri](https://github.com/fakuventuri). Released under the [GPL 3 license](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE).
