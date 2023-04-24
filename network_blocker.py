@@ -168,3 +168,6 @@ if __name__ == "__main__":
             print("           Your IP Address is: ", IPAddr, "\n")
 
             print("          Invalid input. Please enter a number.    \n")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
