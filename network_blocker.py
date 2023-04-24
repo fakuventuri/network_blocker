@@ -1,9 +1,5 @@
 #
-# Developed by @FakuVenturi: https://github.com/fakuventuri
-#
 # Github: https://github.com/fakuventuri/network_blocker
-#
-# Path: network_blocker.py
 #
 # This script is used to block a device on your network.
 #
@@ -12,10 +8,9 @@
 #
 import os
 import sys
+import socket
 
 from typing import List, Tuple
-
-import socket
 
 try:
     from scapy.all import ARP, Ether, srp
@@ -27,7 +22,7 @@ except ImportError:
     sys.exit(1)
 
 
-def scan_network(ip_range: str) -> List[Tuple[str, str]]:
+def scan_network(ip_range: str) -> List[Tuple[str, str, str]]:
     arp_req = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ip_range)
     answered, _ = srp(arp_req, timeout=3, verbose=False)
 
@@ -45,7 +40,7 @@ def scan_network(ip_range: str) -> List[Tuple[str, str]]:
     return device_list
 
 
-def generate_devices_table(device_list: List[Tuple[str, str]]):
+def generate_devices_table(device_list: List[Tuple[str, str, str]]):
     headers = ["Index", "IP Address", "MAC Address", "Hostname"]
     table = [
         (index, ip, mac, hostname)
@@ -168,3 +163,6 @@ if __name__ == "__main__":
             print("           Your IP Address is: ", IPAddr, "\n")
 
             print("          Invalid input. Please enter a number.    \n")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
