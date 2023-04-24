@@ -26,7 +26,7 @@
 
 ## Usage
 
-### 1) Download the script with wget or any other way.
+#### 1) Download the script with wget or any other way.
 * wget:
 
   In the path you want to save the script:
@@ -34,11 +34,21 @@
  wget https://raw.githubusercontent.com/fakuventuri/network_blocker/main/network_blocker.py
  ```
 
-### 2) Run the script:
+#### 2) Run the script:
 
 ```
 sudo python3 network_blocker.py
 ```
+
+## Contributing
+
+Contributions are very welcome!
+
+
+## Disclaimer
+
+This script is for educational and research purposes only. Use it responsibly and ethically, ensuring you have proper authorization and consent from the network owner or administrator. The developer and repository owner are not responsible for any misuse or damages caused by this script. By using it, you accept full responsibility for your actions and agree to comply with all applicable laws and regulations. If you are unsure about legality or ethics, consult a legal or cybersecurity professional.
+
 
 ## License
 
