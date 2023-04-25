@@ -164,7 +164,10 @@ def block_device(
 
 
 def print_menu():
-    os.system("clear")  # clear the terminal
+    if sys.platform == "win32":
+        os.system("cls")
+    else:
+        os.system("clear")
 
     print("\n#                      Welcome to Network Blocker                    #")
     print("               Script to block a device on your network                \n")
@@ -278,7 +281,10 @@ def main():
                         print("No devices are blocked.\n")
                 elif choice == -3:
                     # rescan the network
-                    os.system("clear")
+                    if sys.platform == "win32":
+                        os.system("cls")
+                    else:
+                        os.system("clear")
                     print_menu()
                     print("Scanning network...")
                     device_list = scan_network(ip_range)
