@@ -1,56 +1,82 @@
 # network_blocker
  
-**Linux CLI tool to block network access of devices in LAN written in Python.**
+**Python CLI tool to block network access of devices in LAN**
 
 <br />
-<br />
 
-[![Version](https://img.shields.io/badge/version-1.4.3-blue)](https://github.com/fakuventuri/network_blocker)
+[![Version](https://img.shields.io/badge/version-1.5.2-blue)](https://github.com/fakuventuri/network_blocker)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://github.com/fakuventuri/network_blocker/blob/main/LICENSE)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 ## Features
 
 * **WiFi** network scanning with [scapy](https://github.com/secdev/scapy).
-* **Table display** the devices info with [python-tabulate](https://github.com/astanin/python-tabulate).
+* **Table** to display the detected devices info with [python-tabulate](https://github.com/astanin/python-tabulate).
 * **Block connection of multiple devices simultaneously** with ARP spoofing and subprocess.
 
 
 ## Requirements
 
-* **Linux** root privileges
+* **Linux root** privileges or **Windows Administrator** privileges.
 * Python
-* dsniff (arpspoof)
 * scapy
 * python-tabulate
 
 
 ## Usage
 
-#### 1) Clone repo
+**These are examples**. You can also download the script in another way and run it.
 
-  In the path you want to save the folder:
- ```
- git clone https://github.com/fakuventuri/network_blocker
- ```
+`python3` may need to be replaced by `python` depending on your system configuration.
 
-#### 2) Enter the folder:
+For these examples you need **git** to clone the repo.
 
-```
-cd network-blocker
-```
+* ### Linux
 
-#### 3) Run the script:
+  #### 1) Clone repo
 
-```
-sudo python3 network_blocker.py
-```
+     In the path you want to save the folder:
+
+       git clone https://github.com/fakuventuri/network_blocker
+
+
+  #### 2) Enter the folder:
+
+       cd network-blocker
+      
+
+  #### 3) Run the script:
+
+       sudo python3 network_blocker.py
+
+* ### Windows
+
+  #### 1) Clone repo
+
+     In the path you want to save the folder:
+
+       git clone https://github.com/fakuventuri/network_blocker
+
+
+  #### 2) Enter the folder:
+
+       cd network-blocker
+      
+
+  #### 3) Run the script:
+
+       python3 network_blocker.py
+
 
 [//]: # "wget https://raw.githubusercontent.com/fakuventuri/network_blocker/main/network_blocker.py"
 
-## Update
+## Update (Linux only)
 
 Run `sh update.sh` to update the scripts. This will clone the main branch into `/tmp/network_blocker` and overwrite the local files.
+
+<br />
+
+You can also update the cloned repo.
 
 
 ## Contributing
