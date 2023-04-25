@@ -20,6 +20,8 @@ from threading import Thread, Event
 
 from typing import List, Tuple
 
+import re
+
 try:
     from scapy.all import ARP, Ether, srp, sendp, get_if_hwaddr
     from tabulate import tabulate
