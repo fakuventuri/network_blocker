@@ -52,6 +52,36 @@ def is_admin():
         sys.exit(1)
 
 
+def get_default_interface():
+    if sys.platform == "win32":
+        cmd = "route print 0.0.0.0"
+        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        for line in output.splitlines():
+            if "0.0.0.0" in line and "Default Gateway" not in line:
+                return line.split()[-1]
+    else:
+        cmd = "ip -o -4 route show to default"
+        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        return output.split()[4]
+
+
+def get_default_gateway():
+    if sys.platform == "win32":
+        cmd = "ipconfig"
+        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        gateway_search = re.search(
+            r"Default Gateway[ .]+: ([0-9]+(?:\.[0-9]+){3})", output
+        )
+        if gateway_search:
+            return gateway_search.group(1)
+        else:
+            return None
+    else:
+        cmd = "ip -o -4 route show to default"
+        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        return output.split()[2]
+
+
 def scan_network(ip_range: str) -> List[Tuple[str, str, str]]:
     arp_req = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ip_range)
     answered, _ = srp(arp_req, timeout=3, verbose=False)
@@ -140,14 +170,17 @@ def print_menu():
     print("               Script to block a device on your network                \n")
 
 
-def print_complete_menu(device_list, blocked_devices_threads, IPAddr, gateway_ip):
+def print_complete_menu(
+    device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
+):
     print_menu()
 
     print(
         generate_devices_table(device_list, blocked_devices_threads, gateway_ip), "\n"
     )
 
-    print("Your IP Address is: ", IPAddr, "\n")
+    print("Your IP Address is: ", IPAddr)
+    print("Interface: ", iface, "\n")
 
     print("Blocked devices: ", len(blocked_devices_threads), "\n")
 
@@ -159,17 +192,17 @@ def main():
         print("Please run this script with root/administrator privileges.")
         sys.exit(1)
 
-    print("Scanning network...")
-
     ip_range = "192.168.1.0/24"  # the ip range to scan
 
-    iface = (
-        os.popen("ip -o -4 route show to default | awk '{print $5}'").read().strip("\n")
-    )  # get the interface name and remove the trailing newline
+    iface = get_default_interface()
 
-    gateway_ip = (
-        os.popen("ip -o -4 route show to default | awk '{print $3}'").read().strip("\n")
-    )  # get the gateway ip and remove the trailing newline
+    print("Default interface: ", iface)
+
+    gateway_ip = get_default_gateway()
+
+    print("Gateway IP: ", gateway_ip)
+
+    print("\nScanning network...")
 
     # get the local ip address
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -187,14 +220,14 @@ def main():
         print("No devices found.")
         sys.exit(1)
 
-    print_complete_menu(device_list, blocked_devices_threads, IPAddr, gateway_ip)
+    print_complete_menu(device_list, blocked_devices_threads, IPAddr, gateway_ip, iface)
 
     try:
         while True:
             try:
                 # get the user's choice
                 print(
-                    "  Enter the index of the device to block/unblock\n  0 to block all\n -3 to unblock all\n -2 to rescan the network\n -1 to exit (Ctrl+C)\n"
+                    "  Enter the index of the device to block/unblock\n  0 to block all\n -3 to rescan the network\n -2 to unblock all\n -1 to exit (Ctrl+C)\n"
                 )
                 choice = int(input("~> "))
 
@@ -202,19 +235,14 @@ def main():
                     # exit the script
                     break
                 elif choice == -2:
-                    # rescan the network
-                    os.system("clear")
-                    print_menu()
-                    print("Scanning network...")
-                    device_list = scan_network(ip_range)
-                    print_complete_menu(
-                        device_list, blocked_devices_threads, IPAddr, gateway_ip
-                    )
-                elif choice == -3:
                     # unblock all devices
                     if blocked_devices_threads:
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
                         print("Unblocking all devices...")
                         for process in blocked_devices_threads:
@@ -225,18 +253,39 @@ def main():
                         stopEventsMap.clear()
 
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
                     else:
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
                         print("No devices are blocked.\n")
+                elif choice == -3:
+                    # rescan the network
+                    os.system("clear")
+                    print_menu()
+                    print("Scanning network...")
+                    device_list = scan_network(ip_range)
+                    print_complete_menu(
+                        device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
+                    )
                 elif choice == 0:
                     # block all devices
                     if len(blocked_devices_threads) < len(device_list) - 1:
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
                         print("Blocking all devices...")
                         for device in device_list:
@@ -247,11 +296,19 @@ def main():
                             blocked_devices_threads.append(process)
                             stopEventsMap[device[0]] = e
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
                     else:
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
                         print("All devices are already blocked.\n")
                 elif 0 < choice < len(device_list):
@@ -259,14 +316,18 @@ def main():
                     # check if the user selected the gateway and prevent it
                     if device_list[choice][0] == gateway_ip:
                         print_complete_menu(
-                            device_list, blocked_devices_threads, IPAddr, gateway_ip
+                            device_list,
+                            blocked_devices_threads,
+                            IPAddr,
+                            gateway_ip,
+                            iface,
                         )
 
                         print("You cannot block your gateway.\n")
                         continue
 
                     print_complete_menu(
-                        device_list, blocked_devices_threads, IPAddr, gateway_ip
+                        device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
                     )
                     print("selected device: ", choice)
                     selected_device = device_list[choice]
@@ -292,31 +353,32 @@ def main():
                         stopEventsMap[selected_device[0]] = e
 
                     print_complete_menu(
-                        device_list, blocked_devices_threads, IPAddr, gateway_ip
+                        device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
                     )
                 else:
                     print_complete_menu(
-                        device_list, blocked_devices_threads, IPAddr, gateway_ip
+                        device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
                     )
 
                     print("Invalid choice. Please try again.\n")
             except ValueError:
                 print_complete_menu(
-                    device_list, blocked_devices_threads, IPAddr, gateway_ip
+                    device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
                 )
 
                 print("Invalid input. Please enter a number.    \n")
     except KeyboardInterrupt:
-        print("\n")
+        print("")
     finally:
         if blocked_devices_threads:
             print_complete_menu(
-                device_list, blocked_devices_threads, IPAddr, gateway_ip
+                device_list, blocked_devices_threads, IPAddr, gateway_ip, iface
             )
             print("Terminating all processes...\n")
             for process in blocked_devices_threads:
                 stopEventsMap[process._args[1]].set()
                 process.join()
+        print("\nClosing...")
 
 
 if __name__ == "__main__":
