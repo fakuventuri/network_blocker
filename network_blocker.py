@@ -189,7 +189,15 @@ def main():
     print_menu()
 
     if not is_admin():
-        print("Please run this script with root/administrator privileges.")
+        if sys.platform == "win32":
+            print("Requesting administrator privileges...")
+            script = os.path.abspath(sys.argv[0])
+            ctypes.windll.shell32.ShellExecuteW(
+                None, "runas", sys.executable, f'"{script}"', None, 1
+            )
+        else:
+            print("Please run this script with root privileges.\n")
+            print("Example: sudo python3 network_blocker.py")
         sys.exit(1)
 
     ip_range = "192.168.1.0/24"  # the ip range to scan
