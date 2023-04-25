@@ -55,20 +55,28 @@ def is_admin():
 def get_default_interface():
     if sys.platform == "win32":
         cmd = "route print 0.0.0.0"
-        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        output = subprocess.check_output(cmd, shell=True).decode(
+            "utf-8", errors="ignore"
+        )
+        pattern = re.compile(r"\d+\.\d+\.\d+\.\d+\s+\d+\.\d+\.\d+\.\d+\s+(\S+)")
         for line in output.splitlines():
-            if "0.0.0.0" in line and "Default Gateway" not in line:
-                return line.split()[-1]
+            match = pattern.search(line)
+            if match:
+                return match.group(1)
     else:
         cmd = "ip -o -4 route show to default"
-        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        output = subprocess.check_output(cmd, shell=True).decode(
+            "utf-8", errors="ignore"
+        )
         return output.split()[4]
 
 
 def get_default_gateway():
     if sys.platform == "win32":
         cmd = "ipconfig"
-        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        output = subprocess.check_output(cmd, shell=True).decode(
+            "utf-8", errors="ignore"
+        )
         gateway_search = re.search(
             r"Default Gateway[ .]+: ([0-9]+(?:\.[0-9]+){3})", output
         )
@@ -78,7 +86,9 @@ def get_default_gateway():
             return None
     else:
         cmd = "ip -o -4 route show to default"
-        output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+        output = subprocess.check_output(cmd, shell=True).decode(
+            "utf-8", errors="ignore"
+        )
         return output.split()[2]
 
 
