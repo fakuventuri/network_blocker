@@ -190,8 +190,6 @@ def main():
 
     print_complete_menu(device_list, blocked_devices_threads, IPAddr, gateway_ip)
 
-    print("\n")
-
     try:
         while True:
             try:
@@ -310,7 +308,7 @@ def main():
 
                 print("Invalid input. Please enter a number.    \n")
     except KeyboardInterrupt:
-        print_complete_menu(device_list, blocked_devices_threads, IPAddr, gateway_ip)
+        print("\n")
     finally:
         if blocked_devices_threads:
             print_complete_menu(
