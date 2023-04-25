@@ -25,10 +25,11 @@ import re
 try:
     from scapy.all import ARP, Ether, srp, sendp, get_if_hwaddr
     from tabulate import tabulate
+    import netifaces
 except ImportError:
     print("Required dependencies not found.")
     print("Please install the required packages with the following command:")
-    print("pip install scapy tabulate")
+    print("pip install scapy tabulate netifaces")
     sys.exit(1)
 
 if sys.platform == "win32":
@@ -56,15 +57,21 @@ def is_admin():
 
 def get_default_interface():
     if sys.platform == "win32":
-        cmd = "route print 0.0.0.0"
-        output = subprocess.check_output(cmd, shell=True).decode(
-            "utf-8", errors="ignore"
-        )
-        pattern = re.compile(r"\d+\.\d+\.\d+\.\d+\s+\d+\.\d+\.\d+\.\d+\s+(\S+)")
-        for line in output.splitlines():
-            match = pattern.search(line)
-            if match:
-                return match.group(1)
+        interfaces = netifaces.interfaces()
+        default_interface = None
+        default_gw = netifaces.gateways()["default"][netifaces.AF_INET][0]
+        for interface in interfaces:
+            addrs = netifaces.ifaddresses(interface)
+            if (
+                netifaces.AF_INET in addrs.keys()
+                and addrs[netifaces.AF_INET][0]["addr"] == default_gw
+            ):
+                default_interface = interface
+                break
+        if default_interface is None:
+            default_interface = interfaces[0]
+
+        return default_interface
     else:
         cmd = "ip -o -4 route show to default"
         output = subprocess.check_output(cmd, shell=True).decode(
@@ -75,17 +82,8 @@ def get_default_interface():
 
 def get_default_gateway():
     if sys.platform == "win32":
-        cmd = "ipconfig"
-        output = subprocess.check_output(cmd, shell=True).decode(
-            "utf-8", errors="ignore"
-        )
-        gateway_search = re.search(
-            r"Default Gateway[ .]+: ([0-9]+(?:\.[0-9]+){3})", output
-        )
-        if gateway_search:
-            return gateway_search.group(1)
-        else:
-            return None
+        default_gateway = netifaces.gateways()["default"][netifaces.AF_INET][0]
+        return default_gateway
     else:
         cmd = "ip -o -4 route show to default"
         output = subprocess.check_output(cmd, shell=True).decode(
