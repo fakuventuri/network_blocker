@@ -59,19 +59,24 @@ def get_default_interface():
     if sys.platform == "win32":
         interfaces = netifaces.interfaces()
         default_interface = None
-        default_gw = netifaces.gateways()["default"][netifaces.AF_INET][0]
-        for interface in interfaces:
-            addrs = netifaces.ifaddresses(interface)
-            if (
-                netifaces.AF_INET in addrs.keys()
-                and addrs[netifaces.AF_INET][0]["addr"] == default_gw
-            ):
-                default_interface = interface
-                break
-        if default_interface is None:
-            default_interface = interfaces[0]
+
+        # show and let the user select the interface
+        print("Available interfaces:\n")
+        for index, interface in enumerate(interfaces):
+            print(str(index) + ": " + interface + "\n")
+        while default_interface is None:
+            try:
+                default_interface = interfaces[int(input("Select interface: "))]
+            except ValueError:
+                print("Invalid input, please try again.\n")
+            except KeyboardInterrupt:
+                print("\nExiting...")
+                sys.exit(1)
+            except IndexError:
+                print("Invalid input, please try again.\n")
 
         return default_interface
+
     else:
         cmd = "ip -o -4 route show to default"
         output = subprocess.check_output(cmd, shell=True).decode(
