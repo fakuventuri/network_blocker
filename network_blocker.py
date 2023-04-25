@@ -14,7 +14,6 @@ import socket
 
 import subprocess
 
-import signal
 import atexit
 
 from threading import Thread, Event
