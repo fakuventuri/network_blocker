@@ -205,11 +205,13 @@ def main():
 
     if not is_admin():
         if sys.platform == "win32":
-            print("Requesting administrator privileges...")
-            script = os.path.abspath(sys.argv[0])
-            ctypes.windll.shell32.ShellExecuteW(
-                None, "runas", sys.executable, f'"{script}"', None, 1
-            )
+            # print("Requesting administrator privileges...")
+            # script = os.path.abspath(sys.argv[0])
+            # ctypes.windll.shell32.ShellExecuteW(
+            #     None, "runas", sys.executable, f'"{script}"', None, 1
+            # )
+            print("Please run this script with administrator privileges.\n")
+            sys.exit(1)
         else:
             print("Please run this script with root privileges.\n")
             print("Example: sudo python3 network_blocker.py")
