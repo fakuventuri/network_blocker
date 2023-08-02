@@ -56,33 +56,25 @@ def is_admin():
 
 
 def get_default_interface():
-    if sys.platform == "win32":
-        interfaces = netifaces.interfaces()
-        default_interface = None
+    interfaces = netifaces.interfaces()
+    default_interface = None
 
-        # show and let the user select the interface
-        print("Available interfaces:\n")
-        for index, interface in enumerate(interfaces):
-            print(str(index) + ": " + interface + "\n")
-        while default_interface is None:
-            try:
-                default_interface = interfaces[int(input("Select interface: "))]
-            except ValueError:
-                print("Invalid input, please try again.\n")
-            except KeyboardInterrupt:
-                print("\nExiting...")
-                sys.exit(1)
-            except IndexError:
-                print("Invalid input, please try again.\n")
+    # show and let the user select the interface
+    print("Available interfaces:\n")
+    for index, interface in enumerate(interfaces):
+        print(str(index) + ": " + interface + "\n")
+    while default_interface is None:
+        try:
+            default_interface = interfaces[int(input("Select interface: "))]
+        except ValueError:
+            print("Invalid input, please try again.\n")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            sys.exit(1)
+        except IndexError:
+            print("Invalid input, please try again.\n")
 
-        return default_interface
-
-    else:
-        cmd = "ip -o -4 route show to default"
-        output = subprocess.check_output(cmd, shell=True).decode(
-            "utf-8", errors="ignore"
-        )
-        return output.split()[4]
+    return default_interface
 
 
 def get_default_gateway():
