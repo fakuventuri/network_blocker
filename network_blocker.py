@@ -11,9 +11,9 @@ import sys
 import time
 
 import socket
-
+import ipaddress
 import subprocess
-
+import netifaces
 import atexit
 
 from threading import Thread, Event
@@ -56,33 +56,25 @@ def is_admin():
 
 
 def get_default_interface():
-    if sys.platform == "win32":
-        interfaces = netifaces.interfaces()
-        default_interface = None
+    interfaces = netifaces.interfaces()
+    default_interface = None
 
-        # show and let the user select the interface
-        print("Available interfaces:\n")
-        for index, interface in enumerate(interfaces):
-            print(str(index) + ": " + interface + "\n")
-        while default_interface is None:
-            try:
-                default_interface = interfaces[int(input("Select interface: "))]
-            except ValueError:
-                print("Invalid input, please try again.\n")
-            except KeyboardInterrupt:
-                print("\nExiting...")
-                sys.exit(1)
-            except IndexError:
-                print("Invalid input, please try again.\n")
+    # show and let the user select the interface
+    print("Available interfaces:\n")
+    for index, interface in enumerate(interfaces):
+        print(str(index) + ": " + interface + "\n")
+    while default_interface is None:
+        try:
+            default_interface = interfaces[int(input("Select interface: "))]
+        except ValueError:
+            print("Invalid input, please try again.\n")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            sys.exit(1)
+        except IndexError:
+            print("Invalid input, please try again.\n")
 
-        return default_interface
-
-    else:
-        cmd = "ip -o -4 route show to default"
-        output = subprocess.check_output(cmd, shell=True).decode(
-            "utf-8", errors="ignore"
-        )
-        return output.split()[4]
+    return default_interface
 
 
 def get_default_gateway():
@@ -199,7 +191,6 @@ def print_complete_menu(
 
     print("Your IP Address is: ", IPAddr)
     print("Interface: ", iface, "\n")
-
     print("Blocked devices: ", len(blocked_devices_threads), "\n")
 
 
@@ -220,9 +211,12 @@ def main():
             print("Example: sudo python3 network_blocker.py")
         sys.exit(1)
 
-    ip_range = "192.168.1.0/24"  # the ip range to scan
-
     iface = get_default_interface()
+
+    ip_info = netifaces.ifaddresses(iface)
+    iface_netmask = ip_info[netifaces.AF_INET][0]['netmask']
+    iface_ip = ip_info[netifaces.AF_INET][0]['addr']
+    ip_range = str(ipaddress.IPv4Network(f"{iface_ip}/{iface_netmask}", strict=False)) # the ip range to scan
 
     print("Default interface: ", iface)
 
